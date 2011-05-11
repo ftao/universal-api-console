@@ -1,0 +1,10 @@
+<body>
+  <script>
+    chrome.tabs.create({'url': chrome.extension.getURL('console.html')}, function(newtab) {
+      chrome.tabs.update(newtab.id, { selected: true } )
+      //chrome.tabs.getSelected(null, function(tab) {
+      //    chrome.tabs.update(tab.id, { selected: true } )
+      //});
+    });
+  </script>
+</body>

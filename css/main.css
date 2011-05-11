@@ -1,0 +1,44 @@
+body {
+  min-width:500px;
+  overflow-x:hidden;
+}
+
+.console-page {
+    width:800px;
+    margin:10px auto 0 auto;
+}
+
+#request_wrapper {
+    margin-bottom:10px;
+}
+
+div.request-form {
+    width:600px;
+}
+div#param_template {
+    display:none;
+}
+div#request_header_template {
+    display:none;
+}
+
+input[name="param_value"], input[name='request_header_value'] {
+    margin-left:20px;
+}
+textarea#response_status{
+    width:100%;
+}
+textarea#response_header{
+    width:100%;
+    min-height:100px;
+}
+textarea#response_body {
+    width:100%;
+    min-height:200px;
+}
+
+#response_wrapper {
+    margin-top:10px;
+    display:none;
+}
+

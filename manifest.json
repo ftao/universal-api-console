@@ -1,0 +1,13 @@
+{
+  "name": "Universal API Console",
+  "version": "0.0.1",
+  "description": "Test your api in your browser",
+  "background_page" : "background.html",
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "permissions": [
+    "http://*/",
+    "https://*/"
+  ]
+}

@@ -1,0 +1,160 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" > 
+  <title>The Universal API Console</title>
+  <link href="css/screen.css" rel="stylesheet" type="text/css"/> 
+  <link href="css/main.css" rel="stylesheet" type="text/css"/> 
+  <link href="css/gh-buttons.css" rel="stylesheet" type="text/css"/> 
+</head>
+<body>
+  <div id="wrap" class="console-page container">
+    <h1>The Universal API Console</h1>
+
+    <div id="request_wrapper" class="request-form">
+        <div class="filed-wrapper">
+          <input type="text" name="request_uri" size="100" value="" id="request_uri" placeholder="URL"/>
+        </div>
+
+        <div class="filed-wrapper">
+          <select id="method" name="method">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
+
+        <div class="filed-wrapper key-value-fields" id="params">
+          <fieldset>
+            <a href="#" id="add_more_param">Add Param</a>
+            <div id="param_template">
+              <div class="param-pair">
+                <input type="text" name="param_key" placeholder="name" size="45"/>
+                <input type="text" name="param_value" placeholder="value" size="45"/>
+                <a href="#" class="delete_this">Delete</a>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="filed-wrapper key-value-fields" id="request_header">
+          <fieldset>
+            <a href="#" id="add_more_request_header">Add Request Header</a>
+            <div id="request_header_template">
+              <div class="request-header-pair">
+                <input type="text" name="request_header_key" placeholder="name" size="45"/>
+                <input type="text" name="request_header_value" placeholder="value" size="45"/>
+                <a href="#" class="delete_this">Delete</a>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="filed-wrapper">
+          <input type="submit" name="send" value="Send" id="send" class="button" />
+        </div>
+
+    </div>
+
+    <div id="status"></div>
+    <div id="response_wrapper">
+      <div id="response">
+        <legend>Response</legend>
+        <textarea id="response_status" rows="1"></textarea>
+        <textarea id="response_header"></textarea>
+        <textarea id="response_body"></textarea>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
+    <script type="text/javascript">
+      function show_msg(type, msg, duration){
+        $('#status').removeClass('error').removeClass('success').removeClass('notice');
+        $('#status').addClass(type).html(msg).fadeIn(function(){
+          if(duration > 0){
+              setTimeout( function(){ 
+                      $("#status").fadeOut("fast");
+                  }, duration
+              );
+          }
+        });
+      }
+      $('#add_more_param').click(function(e){
+        $(this).parent().append($('#param_template .param-pair').clone());
+      });
+      $('#add_more_request_header').click(function(e){
+        $(this).parent().append($('#request_header_template .request-header-pair').clone());
+      });
+ 
+      $('a.delete_this').live('click', function(e){
+        $(this).parent().remove();
+        return false;
+      });
+
+      $('#send').click(function(e){
+        show_msg('info', 'sending request ...');
+        $('#response_wrapper').hide();
+        var method = $('#method').val();
+        var url = $('#request_uri').val();
+        var data = {};
+
+        $('input[name="param_key"]').each(function(e){
+            var key = $(this).val();
+            if(key != ''){
+              var val = $(this).next('input[name="param_value"]').val(); 
+              if(val != ''){
+                if(data[key] != undefined){
+                  if($.isArray(data[key])){
+                    data[key].append(val);
+                  }
+                  else{
+                    data[key] = [data[key], val];
+                  }
+                }
+                else{
+                   data[key] = val;
+                }
+              }
+            }
+        });
+        var headers = {};
+        $('input[name="request_header_key"]').each(function(e){
+            var key = $(this).val();
+            if(key != ''){
+              var val = $(this).next('input[name="request_header_value"]').val(); 
+              if(val != ''){
+                  headers[key] = val;
+              }
+            }
+        });
+
+        $.ajax({
+          'url' : url,
+          'type' : method,
+          'data' : data,
+          'dataType' : 'text',
+          'headers' : headers,
+          'complete' : function(jqXHR, textStatus){
+            $('#response_wrapper').show();
+            if(jqXHR.status != 0){
+              $('#response_status').val(jqXHR.status);
+            }
+            else{ 
+              $('#response_status').val('');
+            }
+            $('#response_header').val(jqXHR.getAllResponseHeaders());
+            $('#response_body').val(jqXHR.responseText);
+          },
+          'error' : function(jqXHR, textStatus, errorThrown){
+            show_msg('error', textStatus);
+          },
+          'success': function(data, textStatus, jqXHR){
+            show_msg('success', 'Request Done', 2000)
+          }
+        });
+      });
+    </script>
+
+  </div>
+</body>
+</html>
