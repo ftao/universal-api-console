@@ -21,6 +21,7 @@
             <option value="POST">POST</option>
             <option value="PUT">PUT</option>
             <option value="DELETE">DELETE</option>
+            <option value="HEAD">HEAD</option>
           </select>
         </div>
 
@@ -96,27 +97,18 @@
         $('#response_wrapper').hide();
         var method = $('#method').val();
         var url = $('#request_uri').val();
-        var data = {};
-
+        var data = [];
         $('input[name="param_key"]').each(function(e){
             var key = $(this).val();
             if(key != ''){
               var val = $(this).next('input[name="param_value"]').val(); 
               if(val != ''){
-                if(data[key] != undefined){
-                  if($.isArray(data[key])){
-                    data[key].append(val);
-                  }
-                  else{
-                    data[key] = [data[key], val];
-                  }
-                }
-                else{
-                   data[key] = val;
-                }
+                data.push(encodeURIComponent(key) + '=' + encodeURIComponent(val))
               }
             }
         });
+        data = data.join('&');
+
         var headers = {};
         $('input[name="request_header_key"]').each(function(e){
             var key = $(this).val();
